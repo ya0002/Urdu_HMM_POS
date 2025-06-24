@@ -9,6 +9,8 @@ This project implements a **Hidden Markov Model (HMM)-based Part-of-Speech (PoS)
 
 Accuracy of tagger: 90.10 %
 
+The translated corpus is in `translated.txt`.
+
 The corpus used is:
 **"A Tagged Corpus and a Tagger for Urdu"**  
 *Authors:* Bushra Jawaid, Amir Kamran, Ondřej Bojar  
@@ -20,7 +22,8 @@ In this corpus each token (word or punctuation mark) is followed by a PoS tag, s
 
 Example: 
 
-Each line is made of multiple word|PoS pairs
+Each line is made of multiple `PoS|word`. (Urdu is written from right)
+
 ```
 بلال|PN بھائی|PN ،|PM ہم|PP آپ|PP کی|P محنت|NN کے|P معترف|NN اور|CC قائل|ADJ ہیں|VB ۔|SM
 ```

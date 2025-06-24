@@ -41,40 +41,41 @@ Each line is made of multiple word|PoS pairs
    ```bash
    pip install -r requirements.txt
    ```
+4. extract `urdu_hmm_tagger.zip` to get `urdu_hmm_tagger.pkl`.
 
 
-4. 
 
 # Basic Usage
 
 To run the PoS tagger:
 
-Run 
-```bash
-python tag.py "{sentence}"
-``` 
 
-For example `python tag.py "دو ہزار سال پرانی پینٹگ"` 
+1. With a custom trained model, will automatically download the corpus by the name `urdu-tagged-corpus`
+    ```bash
+    python train_n_tag.py --max_lines 2000 --train-split 0.75 --sentence "میں اردو سیکھ رہا ہوں"
+    ```
 
-<!-- The program will:
 
-* Load and preprocess the tagged corpus
-* Train an HMM model using the corpus
-* Apply the trained model to tag new sentences
-* Output tagged sequences
+2. On a model trained with 5.4 million sentences from `urdu_hmm_tagger.pkl`
+    ```bash
+    python tag.py "{sentence}"
+    ``` 
 
-Sample output:
+    For example `python tag.py "دو ہزار سال پرانی پینٹگ"` 
 
-```
-Sentence: بلال بھائی ، ہم آپ کی محنت کے معترف اور قائل ہیں ۔
-Tags:    PN   PN     PM PP PP  P    NN     P  NN     CC  ADJ  VB SM
-``` -->
 
 # Alternative Language
 
 **Urdu Language Description**
 
+Urdu is a language spoken in the northern regions of the Indian subcontinent.
+
+It uses the Persian script and has linguistic influences from Persian as well as various Indian languages.
+
+Urdu is written from right to left. 
+
 * **What is a sentence?**
+  
   A sentence in Urdu is a complete grammatical unit, typically ending with a punctuation mark like (۔). It includes a subject, predicate, and can also include modifiers, objects, and conjunctions.
 
 * **Used PoS-tags with examples:**

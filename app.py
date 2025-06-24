@@ -1,21 +1,5 @@
 import gradio as gr
-import dill
-
-# Load the HMM tagger
-with open("urdu_hmm_tagger.pkl", "rb") as f:
-    tagger = dill.load(f)
-
-
-def tag_urdu_sentence(sentence):
-    # Simple whitespace-based tokenizer; you can replace this with a better tokenizer
-    tokens = sentence.strip().split()
-    if not tokens:
-        return []
-
-    print(tokens)
-    tagged = tagger.tag(tokens)
-    print(tagged)
-    return tagged
+from tag import tag_urdu_sentence
 
 
 with gr.Blocks() as demo:

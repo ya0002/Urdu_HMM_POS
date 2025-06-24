@@ -4,11 +4,19 @@ import os
 import urllib.request
 import gzip
 import shutil
+import random
 
 from tqdm import tqdm
 
+import nltk
+from nltk.tag.hmm import HiddenMarkovModelTrainer
+import dill
+
+from datetime import datetime
+
 def download_urdu_corpus(filename="urdu-tagged-corpus"):
     """
+    Function was generated using GenAI.
     Download and extract the Urdu tagged corpus if it doesn't exist locally.
     
     Args:
@@ -69,16 +77,41 @@ def parse_tag_file(filepath,max_lines=1000000):
         
     return sentences
 
+if __name__ == "__main__":
+    # Download corpus if not available locally======
+    corpus_filename = "urdu-tagged-corpus"
+    filepath = download_urdu_corpus(corpus_filename)
+    max_lines=1000
+    sentences = parse_tag_file(filepath, max_lines=max_lines)
 
-# Download corpus if not available locally
-# corpus_filename = "urdu-tagged-corpus"
-corpus_filename = "testing"
-filepath = download_urdu_corpus(corpus_filename)
+    # Example
+    print(f"Total sentences: {len(sentences)}")
+    print("First 5 sentences:", sentences[0:5])
 
-sentences = parse_tag_file(filepath, 
-                           max_lines=1000
-                          )
 
-# Example
-print(f"Total sentences: {len(sentences)}")
-print("First 5 sentences:", sentences[0:5])
+    # split dataset======
+
+    random.seed(42)
+    random.shuffle(sentences)
+    split_idx = int(0.8 * len(sentences))  ## 80:20 split
+    train_sents = sentences[:split_idx]
+    test_sents = sentences[split_idx:]
+
+
+    # Train HMM Tagger======
+    trainer = HiddenMarkovModelTrainer()
+    tagger = trainer.train_supervised(train_sents)
+
+    # Evaluate
+    accuracy = tagger.accuracy(test_sents)
+    print(f"Accuracy: {accuracy:.2%}")
+
+    # Format datetime to be Windows filesystem compatible (no colons)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    with open(f"custom_urdu_hmm_tagger_{max_lines}__{timestamp}.pkl", "wb") as f:
+        dill.dump(tagger, f)
+
+    ## tag the sentence
+    urdu_sentence = ["آج", "موسم", "اچھا", "ہے"]
+    tagged = tagger.tag(urdu_sentence)
+    print("Tagged:", tagged)

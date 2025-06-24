@@ -1,3 +1,12 @@
+"""
+# Default behavior (max_lines=1000 train_split=0.8, default sentence)
+python train_n_tag.py
+
+# All arguments
+python train_n_tag.py --max_lines 2000 --train-split 0.75 --sentence "میں اردو سیکھ رہا ہوں"
+
+"""
+
 import pandas as pd
 import numpy as np
 import os
@@ -5,6 +14,7 @@ import urllib.request
 import gzip
 import shutil
 import random
+import argparse
 
 from tqdm import tqdm
 
@@ -78,25 +88,38 @@ def parse_tag_file(filepath,max_lines=1000000):
     return sentences
 
 if __name__ == "__main__":
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Train and evaluate Urdu HMM POS tagger')
+    parser.add_argument('--train-split', type=float, default=0.8, 
+                       help='Train/test split ratio (default: 0.8)')
+    parser.add_argument(
+        "--max_lines",
+        type=float,
+        default=1000,
+        help="Number of sentences to use out of 5.4 Million sentences in the corpus (default: 1000)",
+    )
+    parser.add_argument('--sentence', type=str, 
+                       help='Urdu sentence to tag (space-separated words)')
+
+    args = parser.parse_args()
+
     # Download corpus if not available locally======
     corpus_filename = "urdu-tagged-corpus"
     filepath = download_urdu_corpus(corpus_filename)
-    max_lines=1000
-    sentences = parse_tag_file(filepath, max_lines=max_lines)
+    sentences = parse_tag_file(filepath, max_lines=args.max_lines)
 
     # Example
     print(f"Total sentences: {len(sentences)}")
     print("First 5 sentences:", sentences[0:5])
 
-
     # split dataset======
 
     random.seed(42)
     random.shuffle(sentences)
-    split_idx = int(0.8 * len(sentences))  ## 80:20 split
+    train_percentage = args.train_split  # Use argument value
+    split_idx = int(train_percentage * len(sentences))  ## split based on argument
     train_sents = sentences[:split_idx]
     test_sents = sentences[split_idx:]
-
 
     # Train HMM Tagger======
     trainer = HiddenMarkovModelTrainer()
@@ -108,10 +131,17 @@ if __name__ == "__main__":
 
     # Format datetime to be Windows filesystem compatible (no colons)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    with open(f"custom_urdu_hmm_tagger_{max_lines}__{timestamp}.pkl", "wb") as f:
+    with open(f"custom_urdu_hmm_tagger_{args.max_lines}__{timestamp}.pkl", "wb") as f:
         dill.dump(tagger, f)
 
     ## tag the sentence
-    urdu_sentence = ["آج", "موسم", "اچھا", "ہے"]
-    tagged = tagger.tag(urdu_sentence)
-    print("Tagged:", tagged)
+    if args.sentence:
+        # Use the provided sentence from command line
+        urdu_sentence = args.sentence.split()
+        tagged = tagger.tag(urdu_sentence)
+        print("Tagged:", tagged)
+    else:
+        # Use default sentence if none provided
+        urdu_sentence = ["آج", "موسم", "اچھا", "ہے"]
+        tagged = tagger.tag(urdu_sentence)
+        print("Tagged:", tagged)

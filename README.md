@@ -1,5 +1,5 @@
 
---, Mohammad Yusuf Jamal, [Your Matriculation Number Here]
+--, Mohammad Yusuf Jamal, 12501464
 
 # PoS Tagger for Urdu Language using HMM
 

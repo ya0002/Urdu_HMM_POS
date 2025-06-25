@@ -1,22 +1,27 @@
 
 --, Mohammad Yusuf Jamal, [Your Matriculation Number Here]
 
-PoS Tagger for Urdu Language using HMM
+# PoS Tagger for Urdu Language using HMM
 
 # Project description
 
 This project implements a **Hidden Markov Model (HMM)-based Part-of-Speech (PoS) tagger** for the Urdu language. It uses statistical modeling to assign the most probable PoS tags to words in Urdu sentences, based on a tagged corpus. The system learns transition probabilities (between PoS tags) and emission probabilities (word given a tag) during training, and then applies the Viterbi algorithm for decoding.
 
-Accuracy of tagger: 90.10 %
+Accuracy of tagger with ~5.4 million sentences on a 80:20 split: 90.10 %
 
 The translated corpus is in `translated.txt`.
 
+### Corpus used
 The corpus used is:
 **"A Tagged Corpus and a Tagger for Urdu"**  
 *Authors:* Bushra Jawaid, Amir Kamran, Ondřej Bojar  
 *Institution:* Charles University in Prague, Faculty of Mathematics and Physics, Institute of Formal and Applied Linguistics
 
-It has 5,464,575 sentences.
+Number of sentences: 5,464,575 sentences
+
+Vocabulary: ~582,795 unique word types
+
+Annotation: Automatically tagged with POS tags using an ensemble of three taggers
 
 In this corpus each token (word or punctuation mark) is followed by a PoS tag, separated by a vertical bar (|). Each line represents a sentence.
 
@@ -81,6 +86,64 @@ Urdu is written from right to left.
   
   A sentence in Urdu is a complete grammatical unit, typically ending with a punctuation mark like (۔). It includes a subject, predicate, and can also include modifiers, objects, and conjunctions.
 
+* **Tagset**
+
+  The dataset uses a unified part-of-speech tagset known as Sajjad’s Tagset, which is a consolidation of tagsets from:
+
+  1. CRULP (Center for Research in Urdu Language Processing)
+
+  2. HUM Analyzer (Humayoun's morphological analyzer)
+
+  3. SH Parser (Shallow Parser by IIIT Hyderabad)
+
+
+  | Tag      | Description                                                                                         |
+  | -------- | --------------------------------------------------------------------------------------------------- |
+  | **A**    | Possibly *Adjective particle* or *Affix* (rare; unclear from paper)                                 |
+  | **AA**   | **Auxiliary verb A** – e.g., *hai, tha* (used for tense/aspect/mood)                                |
+  | **AD**   | **Demonstrative pronoun** or **relative pronoun** (e.g., *jo, ye, vo*)                              |
+  | **ADJ**  | **Adjective**                                                                                       |
+  | **ADV**  | **Adverb**                                                                                          |
+  | **AKP**  | **Interrogative pronoun** – used for asking questions (e.g., *kaun, kya*)                           |
+  | **AP**   | Likely **pronoun** (ambiguous in source; possibly *relative* or *interrogative*)                    |
+  | **CA**   | **Cardinal number** – e.g., *ek, do, 3*                                                             |
+  | **CC**   | **Coordinating conjunction** – e.g., *aur, lekin*                                                   |
+  | **DATE** | **Date/time expression**                                                                            |
+  | **EXP**  | **Expression** or **symbol**, e.g., punctuation, emoticons, or typographic characters               |
+  | **FR**   | **Foreign word** – non-Urdu terms used in text                                                      |
+  | **G**    | **Possessive pronoun**, e.g., *mera, tumhara*                                                       |
+  | **GR**   | **Reflexive possessive pronoun**, e.g., *apna*                                                      |
+  | **I**    | **Particle**, often uninflected words like *to, bhi*                                                |
+  | **INT**  | **Interjection**, e.g., *wah, arey*                                                                 |
+  | **KD**   | Another **interrogative pronoun** (used interchangeably with AKP/KP)                                |
+  | **KER**  | **Postposition marker** – e.g., *ke, ka* (part of genitive constructions)                           |
+  | **KP**   | Another form of **interrogative pronoun**                                                           |
+  | **MUL**  | **Multi-word verb expression**, e.g., *chala gaya, uth kar gaya*                                    |
+  | **NEG**  | **Negation**, e.g., *nahin, na*                                                                     |
+  | **NN**   | **Common noun**, e.g., *kitab, admi*                                                                |
+  | **N**    | Possibly **noun** (general or undefined class)                                                      |
+  | **OR**   | **Ordinal number**, e.g., *pehla, doosra*                                                           |
+  | **P**    | **Particle** or **complementizer**, e.g., *ki, ke liye*                                             |
+  | **PD**   | **Demonstrative pronoun**, e.g., *yeh, woh*                                                         |
+  | **PM**   | **Punctuation mark**, often matched to symbols like commas, periods, etc.                           |
+  | **PN**   | **Proper noun**, e.g., *Ali, Pakistan*                                                              |
+  | **PP**   | **Personal pronoun**, e.g., *main, tu, wo*                                                          |
+  | **Q**    | **Indefinite/quantifier pronoun**, e.g., *kuch, sab, koi*                                           |
+  | **QF**   | Likely **quantifier function word** or a **fine-grained quantifier** (not fully explained in paper) |
+  | **QW**   | **Question word**, e.g., *kya, kaun, kab*                                                           |
+  | **RD**   | **Relative determiner**, e.g., *jo*                                                                 |
+  | **REP**  | **Repetition marker**, for emphasis or reduplication (e.g., *baar baar*)                            |
+  | **RP**   | **Reflexive pronoun**, e.g., *khud*                                                                 |
+  | **SC**   | **Subordinating conjunction**, e.g., *agar, jab, ke*                                                |
+  | **SE**   | **Postposition**, e.g., *se, mein, tak*                                                             |
+  | **SM**   | **Symbol**, such as mathematical or special characters                                              |
+  | **TA**   | **Auxiliary verb T** – another form of auxiliary (used in tense constructions)                      |
+  | **U**    | **Uncategorized or unknown class**                                                                  |
+  | **UNK**  | **Unknown token** (unrecognized by tagger)                                                          |
+  | **VB**   | **Verb**, e.g., *karna, jana*                                                                       |
+  | **WALA** | **‘Wala’ participle construction**, e.g., *khilne wala, karne wala*                                 |
+
+
 * **Used PoS-tags with examples:**
 
   | Tag | Description        | Example (Urdu) | English Equivalent |
@@ -104,27 +167,12 @@ Urdu is written from right to left.
 
 ChatGPT was used in the development process for:
 
-* Designing the HMM-based approach
-* Understanding how to train transition and emission probabilities
-* Explaining and implementing the Viterbi decoding algorithm
-* Writing documentation such as this README
+* Formatting README to markdown
+* Function for downloading the dataset if its not available.
 
 **Prompts used:**
 
-* "How do I implement a PoS tagger using HMM in Python?"
-* "Explain the Viterbi algorithm with Urdu PoS tagging as an example."
-* "Help me write a README for a PoS tagger based on an HMM model."
+* " Rewrite the following info in Markdown: {raw_text}"
+* "Write a function to download the file and extract its content if it's not available in the project root" 
 
-# Implementation of the Requests
-
-| Requirement                               | Implementation Details                                                               |
-| ----------------------------------------- | ------------------------------------------------------------------------------------ |
-| Description of sentences, words, PoS-tags | See `Alternative Language` section and inline code comments                          |
-| Tagged Urdu corpus usage                  | Loaded via `load_corpus()` in `main.py`                                              |
-| HMM Model implementation                  | `train_hmm()` for transition/emission probabilities, Viterbi decoding in `viterbi()` |
-| Output interpretation                     | Printed as tagged sequences per sentence                                             |
-| Completeness                              | Modular code with clear preprocessing, training, and testing phases                  |
-
----
-
-
+# Output examples

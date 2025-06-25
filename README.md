@@ -220,4 +220,188 @@ ChatGPT was used in the development process for:
    - Output: `[('آپ', 'PP'), ('کہاں', 'AKP'), ('رہتے', 'VB'), ('ہیں؟', 'NN')]`
 
 
-<!-- # Implementation of the Requests -->
+# Implementation of the Requests
+
+This chapter describes the implementation of each project request in the codebase. The project implements a Hidden Markov Model (HMM) based Part-of-Speech tagger for Urdu language with comprehensive functionality.
+
+## 1. Evaluate Tagged Corpus
+
+**Implementation Location:** `train_n_tag.py` - functions `download_urdu_corpus()` and `parse_tag_file()`
+
+**Description:** 
+The corpus evaluation is implemented through automated download and parsing mechanisms:
+
+- **Corpus Download:** The `download_urdu_corpus()` function automatically downloads the Urdu tagged corpus from LINDAT repository if not available locally
+- **Corpus Parsing:** The `parse_tag_file()` function processes the tagged corpus file, extracting word-tag pairs from each sentence
+- **Data Structure:** Each sentence is parsed into a list of tuples `(word, tag)` format
+- **Corpus Statistics:** The system reports total sentences processed and provides sample output
+
+**Key Code Components:**
+```python
+def parse_tag_file(filepath, max_lines=1000000):
+    sentences = []
+    # Parses each line splitting on '|' delimiter
+    # Returns list of sentences with (word, tag) tuples
+```
+
+## 2. Split Corpus into Train and Test Sentences
+
+**Implementation Location:** `train_n_tag.py` - main execution section
+
+**Description:**
+The corpus splitting functionality provides configurable train/test splits:
+
+- **Configurable Split Ratio:** Uses `--train-split` argument (default: 0.8 for 80/20 split)
+- **Random Shuffling:** Implements `random.seed(42)` for reproducible splits
+- **Split Calculation:** Calculates split index based on percentage and total sentences
+- **Data Separation:** Creates `train_sents` and `test_sents` arrays
+
+**Key Code Components:**
+```python
+random.seed(42)
+random.shuffle(sentences)
+train_percentage = args.train_split
+split_idx = int(train_percentage * len(sentences))
+train_sents = sentences[:split_idx]
+test_sents = sentences[split_idx:]
+```
+
+## 3. Create HMM PoS-Tagger
+
+**Implementation Location:** `train_n_tag.py` - HMM training section
+
+**Description:**
+The HMM tagger creation uses NLTK's Hidden Markov Model implementation:
+
+- **Trainer Initialization:** Uses `HiddenMarkovModelTrainer()` from NLTK
+- **Supervised Training:** Trains on labeled corpus using `train_supervised(train_sents)`
+- **Model Persistence:** Saves trained model using `dill` serialization
+- **Timestamped Output:** Creates uniquely named model files with timestamp
+
+**Key Code Components:**
+```python
+from nltk.tag.hmm import HiddenMarkovModelTrainer
+trainer = HiddenMarkovModelTrainer()
+tagger = trainer.train_supervised(train_sents)
+# Saves model with timestamp for versioning
+```
+
+## 4. Show Accuracy of the PoS-Tagger
+
+**Implementation Location:** `train_n_tag.py` - evaluation section
+
+**Description:**
+Accuracy evaluation is performed on the test set:
+
+- **Built-in Evaluation:** Uses NLTK's `tagger.accuracy(test_sents)` method
+- **Percentage Display:** Formats accuracy as percentage with 2 decimal places
+- **Test Set Validation:** Evaluates on unseen test data for unbiased accuracy
+
+**Key Code Components:**
+```python
+accuracy = tagger.accuracy(test_sents)
+print(f"Accuracy: {accuracy:.2%}")
+```
+
+## 5. Read Another Test
+
+**Implementation Location:** `tag.py` - command line interface and `train_n_tag.py` - sentence argument
+
+**Description:**
+The system provides multiple ways to input test sentences:
+
+- **Command Line Input:** `tag.py` accepts sentence as command line argument
+- **Training Script Input:** `train_n_tag.py` accepts `--sentence` parameter
+- **Default Fallback:** Provides default Urdu sentence if none specified
+- **Flexible Input:** Supports any Urdu sentence for testing
+
+**Key Code Components:**
+```python
+# In tag.py
+parser.add_argument('sentence', type=str, help='Urdu sentence to be tagged')
+
+# In train_n_tag.py  
+parser.add_argument('--sentence', type=str, help='Urdu sentence to tag')
+```
+
+## 6. Output PoS-Tags as List of Tuples
+
+**Implementation Location:** `tag.py` - `tag_urdu_sentence()` and `print_tagged_output()`
+
+**Description:**
+The output functionality provides both programmatic and formatted output:
+
+- **Tuple Format:** Returns list of `(word, tag)` tuples from `tag_urdu_sentence()`
+- **Formatted Output:** `print_tagged_output()` provides human-readable table format
+- **Tokenization:** Simple whitespace-based tokenizer for input processing
+- **Error Handling:** Handles empty input gracefully
+
+**Key Code Components:**
+```python
+def tag_urdu_sentence(sentence):
+    tokens = sentence.strip().split()
+    tagged = tagger.tag(tokens)
+    return tagged  # Returns [(word, tag), ...]
+
+def print_tagged_output(tagged_sentence):
+    # Formats output in table format with headers
+```
+
+## 7. Command Line Interface (No GUI)
+
+**Implementation Location:** `tag.py` and `train_n_tag.py` - argparse implementations
+
+**Description:**
+The project implements comprehensive command-line interfaces:
+
+- **Primary Tagger:** `tag.py` provides direct sentence tagging via CLI
+- **Training Interface:** `train_n_tag.py` provides full training pipeline control
+- **Argument Parsing:** Uses `argparse` for robust command-line argument handling
+- **No GUI Dependency:** Pure command-line operation (note: `app.py` contains GUI but is separate)
+
+**Usage Examples:**
+```bash
+# Tag a sentence
+python tag.py "آج موسم اچھا ہے"
+
+# Train with custom parameters
+python train_n_tag.py --max_lines 2000 --train-split 0.75 --sentence "میں اردو سیکھ رہا ہوں"
+```
+
+## 8. Python Version Compatibility (>= 3.10)
+
+**Implementation Location:** Throughout the codebase
+
+**Description:**
+The implementation uses modern Python features and libraries:
+
+- **Modern Syntax:** Uses f-strings, type hints where applicable
+- **Updated Libraries:** `requirements.txt` specifies current library versions
+- **Standard Library:** Uses modern argparse, datetime formatting
+- **No Legacy Code:** No Python 2.x compatibility concerns
+
+**Dependencies:**
+```
+nltk==3.9.1      # Natural Language Toolkit
+dill==0.3.8      # Enhanced pickling
+gradio==5.34.2   # Web interface (optional)
+```
+
+## System Architecture
+
+The implementation follows a modular architecture:
+
+1. **Data Layer:** Corpus download and parsing (`download_urdu_corpus`, `parse_tag_file`)
+2. **Model Layer:** HMM training and persistence (`HiddenMarkovModelTrainer`)
+3. **Application Layer:** Command-line interfaces (`tag.py`, `train_n_tag.py`)
+4. **Presentation Layer:** Formatted output and optional web interface
+
+## File Structure Summary
+
+- `train_n_tag.py`: Complete training pipeline with evaluation
+- `tag.py`: Production tagging interface
+- `app.py`: Optional Gradio web interface
+- `requirements.txt`: Dependency specification
+- `*.pkl`: Serialized trained models
+
+This implementation provides a complete, production-ready Urdu PoS tagging system that fulfills all project requirements while maintaining code quality and usability.

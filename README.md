@@ -9,7 +9,7 @@ This project implements a **Hidden Markov Model (HMM)-based Part-of-Speech (PoS)
 
 Accuracy of tagger with ~5.4 million sentences on a 80:20 split: 90.10 %
 
-The translated corpus is in `translated.txt`.
+The translated corpus is in `translated.txt`. It has ~121 K sentences.
 
 ### Corpus used
 The corpus used is:

@@ -39,12 +39,13 @@ def print_tagged_output(tagged_sentence):
 def main():
     parser = argparse.ArgumentParser(description='Tag Urdu sentence with Part-of-Speech tags using HMM')
     parser.add_argument('sentence', type=str, help='Urdu sentence to be tagged')
-    
+
     args = parser.parse_args()
-    
+
     print(f"\nInput sentence: {args.sentence}")
-    
+
     tagged_result = tag_urdu_sentence(args.sentence)
+    print(tagged_result)
     print_tagged_output(tagged_result)
 
 

@@ -17,6 +17,8 @@ The corpus used is:
 *Authors:* Bushra Jawaid, Amir Kamran, Ondřej Bojar  
 *Institution:* Charles University in Prague, Faculty of Mathematics and Physics, Institute of Formal and Applied Linguistics
 
+[Homepage of the dataset. I used urdu-tagged-corpus.gz](https://lindat.mff.cuni.cz/repository/xmlui/handle/11858/00-097C-0000-0023-65A9-5#)
+
 Number of sentences: 5,464,575 sentences
 
 Vocabulary: ~582,795 unique word types
@@ -29,7 +31,7 @@ Example:
 
 Each line is made of multiple `PoS|word`. (Urdu is written from right)
 
-```
+```haskell
 بلال|PN بھائی|PN ،|PM ہم|PP آپ|PP کی|P محنت|NN کے|P معترف|NN اور|CC قائل|ADJ ہیں|VB ۔|SM
 ```
 
@@ -161,7 +163,7 @@ Urdu is written from right to left.
   | PM  | Punctuation Mark   | ،              | ,                  |
   | NEG | Negation           | نہیں           | not                |
 
-  *(The complete tagset is documented and handled in the code.)*
+  
 
 # Used AI
 
@@ -176,3 +178,46 @@ ChatGPT was used in the development process for:
 * "Write a function to download the file and extract its content if it's not available in the project root" 
 
 # Output examples
+
+1. `python tag.py "آج موسم بہت خوشگوار ہے"`
+  - *Today the weather is very pleasant.*
+  - Output: ```[('آج', 'NN'), ('موسم', 'NN'), ('بہت', 'ADV'), ('خوشگوار', 'ADJ'), ('ہے', 'VB')]```
+
+2. `python tag.py "میں کتاب پڑھ رہا ہوں"`
+  - *I am reading a book.*
+  - Output: `[('میں', 'P'), ('کتاب', 'NN'), ('پڑھ', 'VB'), ('رہا', 'AA'), ('ہوں', 'TA')]`
+
+3. `python tag.py "وہ اسکول جا رہی ہے"`
+  - *She is going to school.*
+  - Output: `[('وہ', 'PP'), ('اسکول', 'NN'), ('جا', 'VB'), ('رہی', 'AA'), ('ہے', 'TA')]`
+
+4. `python tag.py "ہم کل لاہور جائیں گے"`
+  - *We will go to Lahore tomorrow.*
+  - Output: `[('ہم', 'PP'), ('کل', 'Q'), ('لاہور', 'PN'), ('جائیں', 'AA'), ('گے', 'TA')]`
+
+5. `python tag.py "کیا آپ چائے پئیں گے؟"`
+  - *Will you have tea?*
+  - Output: `[('کیا', 'QW'), ('آپ', 'PP'), ('چائے', 'NN'), ('پئیں', 'NN'), ('گے؟', 'NN')]`
+
+6. `python tag.py "میرے والد ڈاکٹر ہیں"`
+  - *My father is a doctor.*
+  - Output: `[('میرے', 'G'), ('والد', 'NN'), ('ڈاکٹر', 'NN'), ('ہیں', 'VB')]`
+
+7. `python tag.py "بچے پارک میں کھیل رہے ہیں"`
+  - *Children are playing in the park.*
+  - Output: `[('بچے', 'NN'), ('پارک', 'NN'), ('میں', 'P'), ('کھیل', 'VB'), ('رہے', 'AA'), ('ہیں', 'TA')]`
+
+8. `python tag.py "یہ کتاب بہت دلچسپ ہے"`
+  - *This book is very interesting.*
+  - Output: `[('یہ', 'PD'), ('کتاب', 'NN'), ('بہت', 'ADV'), ('دلچسپ', 'ADJ'), ('ہے', 'VB')]`
+
+9. `python tag.py "مجھے اردو زبان پسند ہے"`
+  - *I like the Urdu language.*
+  - Output: `[('مجھے', 'PP'), ('اردو', 'PN'), ('زبان', 'NN'), ('پسند', 'NN'), ('ہے', 'VB')]`
+
+10. `python tag.py "آپ کہاں رہتے ہیں؟"`
+   - *Where do you live?*
+   - Output: `[('آپ', 'PP'), ('کہاں', 'AKP'), ('رہتے', 'VB'), ('ہیں؟', 'NN')]`
+
+
+<!-- # Implementation of the Requests -->

@@ -7,7 +7,7 @@
 
 This project implements a **Hidden Markov Model (HMM)-based Part-of-Speech (PoS) tagger** for the Urdu language. It uses statistical modeling to assign the most probable PoS tags to words in Urdu sentences, based on a tagged corpus. The system learns transition probabilities (between PoS tags) and emission probabilities (word given a tag) during training, and then applies the Viterbi algorithm for decoding.
 
-Accuracy of tagger with ~5.4 million sentences on a 80:20 split: 90.10 %
+Accuracy of tagger with ~5.4 million sentences on a 80:20 split: `90.10 %`
 
 The translated corpus is in `translated.txt`. It has ~121 K sentences.
 
